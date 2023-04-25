@@ -13,9 +13,20 @@ const options = {
   }
 };
 
+let weatherData = [];
+let cities = ['nyc', 'la', 'houston', 'boston'];
+
+for (let i = 0; i < cities.length; i++) { 
+  options['params']['q'] = cities[i];
+  axios.request(options).then(function (response) {
+    weatherData.push(response.data)
+  }).catch(function (error) {
+    res.send(error);
+  });
+} 
+
 let myPromise = new Promise(function(myResolve, myReject) {
   axios.request(options).then(function (response) {
-    console.log('options:' + options['params']['q'])
     myResolve(response.data)
   }).catch(function (error) {
     myReject(error)
@@ -72,8 +83,16 @@ router.get('/weather', function(req, res) {
   });
 });
 
+router.get('/data', function(req, res) {
+  res.send(weatherData)
+});
+
 router.get('/edit', function(req, res){
   res.render('edit-form');
+});
+
+router.get('/angular', function(req, res){
+  res.render('frontend/src/app/app.component');
 });
 
 module.exports = router;
